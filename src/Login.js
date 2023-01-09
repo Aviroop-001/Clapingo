@@ -1,5 +1,6 @@
 import { FormControl, Input, VStack, Box, Text, Button } from '@chakra-ui/react';
 import React, {useState} from 'react'
+import { useToast } from "@chakra-ui/react";
 
 function Login() {
 
@@ -7,6 +8,7 @@ function Login() {
   const [userID, setuserID] = useState();
   const [password, setpassword] = useState();
   const [loading, setloading] = useState(false);
+  const toast = useToast();
 
   //functions
 
@@ -18,7 +20,17 @@ function Login() {
     });
     // if user already logged in
     if(currUser){
-      window.location.replace("/logged");
+      if(currUser.password === password){
+        window.location.replace("/logged");
+      }
+      else{
+        toast({
+          title: "Wrong Password",
+          status: "error",
+          duration: 4000,
+          position: 'top'
+        });
+      }
     }
     else{
       //if new user logged in
@@ -27,8 +39,6 @@ function Login() {
       localStorage.setItem("users", JSON.stringify(existingUsers));
       window.location.replace("/");
     }
-    setuserID("");
-    setpassword("");
   }
 
   return (
@@ -96,10 +106,10 @@ function Login() {
           isLoading={loading}
           height="3rem"
           width="7rem"
+          _hover={{backgroundColor: 'teal.900'}}
           onClick={(e) => submitHandler(e)}
         >
-          {" "}
-          Login{" "}
+          Login
         </Button>
       </VStack>
     </Box>
