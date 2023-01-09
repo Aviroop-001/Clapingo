@@ -1,17 +1,34 @@
 import { FormControl, Input, VStack, Box, Text, Button } from '@chakra-ui/react';
 import React, {useState} from 'react'
-import { BrowserRouter as Router, Link } from "react-router-dom";
 
 function Login() {
 
 //states
-  const [username, setusername] = useState();
+  const [userID, setuserID] = useState();
   const [password, setpassword] = useState();
   const [loading, setloading] = useState(false);
 
   //functions
+
   const submitHandler = () =>{
-    //save to local storage
+    var existingUsers = JSON.parse(localStorage.getItem("users"));
+    if (existingUsers == null) existingUsers = [];
+    const currUser = existingUsers.find((user) => {
+      return user.userID === userID;
+    });
+    // if user already logged in
+    if(currUser){
+      window.location.replace("/logged");
+    }
+    else{
+      //if new user logged in
+      var newUser = { userID: userID, password: password };
+      existingUsers.push(newUser);
+      localStorage.setItem("users", JSON.stringify(existingUsers));
+      window.location.replace("/");
+    }
+    setuserID("");
+    setpassword("");
   }
 
   return (
@@ -39,14 +56,14 @@ function Login() {
             variant="ghost"
             type="text"
             size="lg"
-            placeholder="Username"
+            placeholder="UserID"
             color="teal"
             fontWeight="bolder"
             width="80%"
             padding="1.5rem"
             borderRadius="0px"
             borderBottom="1px solid teal"
-            onChange={(e) => setusername(e.target.value)}
+            onChange={(e) => setuserID(e.target.value)}
           />
         </FormControl>
         {/* PASSWORD */}
